@@ -15,11 +15,4 @@ public class BfsBootApplication {
     public static void main(String[] args) {
         SpringApplication.run(BfsBootApplication.class, args);
     }
-
-    @Bean
-    public CommandLineRunner commandLineRunner(ApplicationContext context) {
-        return args -> {
-            System.out.println("Let's inspect the beans provided by Spring Boot:");
-        };
-    }
 }

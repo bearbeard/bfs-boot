@@ -4,7 +4,7 @@ import bfs.bfsboot.bfs.Surface;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class HelloController {
+public class CalculateController {
     @RequestMapping("/")
     public String index() {
 //        Surface surface = new Surface(5, 5);
