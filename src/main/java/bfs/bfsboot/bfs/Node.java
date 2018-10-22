@@ -1,6 +1,10 @@
 package bfs.bfsboot.bfs;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Node {
     private int height;
@@ -10,6 +14,10 @@ public class Node {
     private int y;
     private Surface surface;
     private LinkedList<Node> nodeQueue;
+    private Node leftNode;
+    private Node topNode;
+    private Node rightNode;
+    private Node bottomNode;
 
     Node(int height, int x, int y, Surface surface) {
         this.height = height;
@@ -46,10 +54,10 @@ public class Node {
 
     public void process() {
         System.out.println("Node: "+ height);
-        Node leftNode = x == 0 ? null : surface.getNode(y, x - 1);
-        Node topNode = y == 0 ? null : surface.getNode(y - 1, x);
-        Node rightNode = x == surface.getXSize() - 1 ? null : surface.getNode(y, x + 1);
-        Node bottomNode = y == surface.getYSize() - 1 ? null : surface.getNode(y + 1, x);
+        leftNode = x == 0 ? null : surface.getNode(y, x - 1);
+        topNode = y == 0 ? null : surface.getNode(y - 1, x);
+        rightNode = x == surface.getXSize() - 1 ? null : surface.getNode(y, x + 1);
+        bottomNode = y == surface.getYSize() - 1 ? null : surface.getNode(y + 1, x);
 
         addNodeToQ(leftNode);
         addNodeToQ(topNode);
@@ -57,25 +65,42 @@ public class Node {
         addNodeToQ(bottomNode);
         System.out.println("Q: "+ surface.getNodeQueue());
         if (!isBorder) {
+            /*if (surface.getCurrentHeight() > height) {
+                surface.setCurrentHeight(getMinNeighbourNodeHeight());
+            }*/
             int v = surface.getCurrentHeight() - height;
             surface.addVolume(v > 0 ? v : 0);
             setFilled(true);
         }
+        while (!nodeQueue.isEmpty()) {
+            Node nextNode;
+            nextNode = nodeQueue.stream().min(Comparator.comparingInt(Node::getHeight)).get();
+            if (nextNode.getHeight() > surface.getCurrentHeight() && surface.getBorder().stream().anyMatch(node -> node.getHeight() < nextNode.getHeight())) {
+                break;
+            } else {
+                nodeQueue.remove(nextNode);
+                if (nextNode.getHeight() < height && surface.getCurrentHeight() < height) {
+                    surface.setCurrentHeight(height);
+                }
+                nextNode.process();
+            }
+        }
         System.out.println("V: "+ surface.getWaterVolume());
         System.out.println("-------");
-        if (!nodeQueue.isEmpty()) {
-            Node nextNode = nodeQueue.removeFirst();
-            nextNode.process();
-        }
     }
 
-    private void addNodeToQ(Node node) {
-        if (node == null || node.isFilled()
-                || node.isBorder()
-                || nodeQueue.contains(node)
-                || (!isBorder && height > node.getHeight() && height > surface.getCurrentHeight())) {
+    private int getMinNeighbourNodeHeight() {
+        Node[] nodes = {leftNode, topNode, rightNode, bottomNode};
+        return Arrays.stream(nodes).filter(Objects::nonNull).map(node -> node.height).min(Integer::compareTo).get();
+    }
+
+    private void addNodeToQ(Node nodeToAdd) {
+        //|| (!isBorder && height > nodeToAdd.getHeight() && height > surface.getCurrentHeight())
+        if (nodeToAdd == null || nodeToAdd.isFilled()
+                || nodeToAdd.isBorder()
+                || nodeQueue.contains(nodeToAdd)) {
             return;
         }
-        nodeQueue.add(node);
+        nodeQueue.add(nodeToAdd);
     }
 }

@@ -9,16 +9,11 @@ public class Surface {
     private int xSize;
     private int ySize;
     private List<List<Node>> elements = new ArrayList<>();
-    private final List<Node> border = new ArrayList<>();
+    private final LinkedList<Node> border = new LinkedList<>();
     private final LinkedList<Node> nodeQueue = new LinkedList<>();
     private int waterVolume = 0;
     // высота вершины, с которой начали обход
     private int currentHeight;
-
-    public Surface(List<List<Node>> elements) {
-        this.elements = elements;
-        makeBorderList(this.elements);
-    }
 
     public Surface(int xSize, int ySize) {
         this.xSize = xSize;
@@ -32,13 +27,13 @@ public class Surface {
                 a.add(n);
             }
         }
-        makeBorderList(this.elements);
+        makeBorderList();
     }
 
     /**
      * Кладем вершины с границы в отдельный массив. С него начинается обработка
      */
-    private void makeBorderList(List<List<Node>> elements) {
+    private void makeBorderList() {
         Node node;
 
         for (int i = 0; i < elements.get(0).size(); i++) {
@@ -63,12 +58,17 @@ public class Surface {
     }
 
     public int calculateVolume() {
-        for (Node borderNode : border) {
+        while (!border.isEmpty()) {
+            Node borderNode = border.removeFirst();
             currentHeight = borderNode.getHeight();
             System.out.println("currentHeight: "+ currentHeight);
             borderNode.process();
         }
         return waterVolume;
+    }
+
+    public LinkedList<Node> getBorder() {
+        return border;
     }
 
     public Node getNode(int y, int x) {
@@ -93,6 +93,10 @@ public class Surface {
 
     public int getCurrentHeight() {
         return currentHeight;
+    }
+
+    public void setCurrentHeight(int currentHeight) {
+        this.currentHeight = currentHeight;
     }
 
     public int getWaterVolume() {
