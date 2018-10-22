@@ -62,7 +62,6 @@ public class Surface {
             Node borderNode = border.stream().min(Comparator.comparingInt(Node::getHeight)).get();
             currentHeight = borderNode.getHeight();
             border.remove(borderNode);
-            System.out.println("currentHeight: "+ currentHeight);
             borderNode.process();
         }
         return waterVolume;

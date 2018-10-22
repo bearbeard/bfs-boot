@@ -14,10 +14,6 @@ public class Node {
     private int y;
     private Surface surface;
     private LinkedList<Node> nodeQueue;
-    private Node leftNode;
-    private Node topNode;
-    private Node rightNode;
-    private Node bottomNode;
 
     Node(int height, int x, int y, Surface surface) {
         this.height = height;
@@ -53,17 +49,16 @@ public class Node {
     }
 
     public void process() {
-        System.out.println("Node: "+ height);
-        leftNode = x == 0 ? null : surface.getNode(y, x - 1);
-        topNode = y == 0 ? null : surface.getNode(y - 1, x);
-        rightNode = x == surface.getXSize() - 1 ? null : surface.getNode(y, x + 1);
-        bottomNode = y == surface.getYSize() - 1 ? null : surface.getNode(y + 1, x);
+        Node leftNode = x == 0 ? null : surface.getNode(y, x - 1);
+        Node topNode = y == 0 ? null : surface.getNode(y - 1, x);
+        Node rightNode = x == surface.getXSize() - 1 ? null : surface.getNode(y, x + 1);
+        Node bottomNode = y == surface.getYSize() - 1 ? null : surface.getNode(y + 1, x);
 
         addNodeToQ(leftNode);
         addNodeToQ(topNode);
         addNodeToQ(rightNode);
         addNodeToQ(bottomNode);
-        System.out.println("Q: "+ surface.getNodeQueue());
+
         if (!isBorder) {
             int v = surface.getCurrentHeight() - height;
             surface.addVolume(v > 0 ? v : 0);
@@ -73,8 +68,6 @@ public class Node {
             Node nextNode = nodeQueue.removeFirst();
             nextNode.process();
         }
-        System.out.println("V: "+ surface.getWaterVolume());
-        System.out.println("-------");
     }
 
     private void addNodeToQ(Node nodeToAdd) {

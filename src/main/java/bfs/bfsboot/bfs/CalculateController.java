@@ -15,7 +15,6 @@ public class CalculateController {
     @GetMapping("/volumes/{x}/{y}")
     public String calculateVolume(@PathVariable int x, @PathVariable int y) {
         Surface surface = new Surface(x, y);
-        System.out.println(surface);
         Date start = new Date();
         int v = surface.calculateVolume();
         Date finish = new Date();
