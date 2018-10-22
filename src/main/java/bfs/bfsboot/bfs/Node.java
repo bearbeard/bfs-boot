@@ -65,42 +65,31 @@ public class Node {
         addNodeToQ(bottomNode);
         System.out.println("Q: "+ surface.getNodeQueue());
         if (!isBorder) {
-            /*if (surface.getCurrentHeight() > height) {
-                surface.setCurrentHeight(getMinNeighbourNodeHeight());
-            }*/
             int v = surface.getCurrentHeight() - height;
             surface.addVolume(v > 0 ? v : 0);
             setFilled(true);
         }
         while (!nodeQueue.isEmpty()) {
-            Node nextNode;
-            nextNode = nodeQueue.stream().min(Comparator.comparingInt(Node::getHeight)).get();
-            if (nextNode.getHeight() > surface.getCurrentHeight() && surface.getBorder().stream().anyMatch(node -> node.getHeight() < nextNode.getHeight())) {
-                break;
-            } else {
-                nodeQueue.remove(nextNode);
-                if (nextNode.getHeight() < height && surface.getCurrentHeight() < height) {
-                    surface.setCurrentHeight(height);
-                }
-                nextNode.process();
-            }
+            Node nextNode = nodeQueue.removeFirst();
+            nextNode.process();
         }
         System.out.println("V: "+ surface.getWaterVolume());
         System.out.println("-------");
     }
 
-    private int getMinNeighbourNodeHeight() {
-        Node[] nodes = {leftNode, topNode, rightNode, bottomNode};
-        return Arrays.stream(nodes).filter(Objects::nonNull).map(node -> node.height).min(Integer::compareTo).get();
-    }
-
     private void addNodeToQ(Node nodeToAdd) {
-        //|| (!isBorder && height > nodeToAdd.getHeight() && height > surface.getCurrentHeight())
         if (nodeToAdd == null || nodeToAdd.isFilled()
                 || nodeToAdd.isBorder()
-                || nodeQueue.contains(nodeToAdd)) {
+                || nodeQueue.contains(nodeToAdd)
+                || surface.getBorder().contains(nodeToAdd)) {
             return;
         }
-        nodeQueue.add(nodeToAdd);
+        // ноды с большей высотой, чем у текущей помещаем в массив краевых нод.
+        // Их будем обрабатывать позже в порядке возрастания высоты нод в массиве краевых нод
+        if (nodeToAdd.getHeight() > height) {
+            surface.getBorder().add(nodeToAdd);
+        } else {
+            nodeQueue.add(nodeToAdd);
+        }
     }
 }

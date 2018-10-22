@@ -54,13 +54,14 @@ public class Surface {
             node.setBorder(true);
             border.add(node);
         }
-        border.sort(Comparator.comparingInt(Node::getHeight));
+        //border.sort(Comparator.comparingInt(Node::getHeight));
     }
 
     public int calculateVolume() {
         while (!border.isEmpty()) {
-            Node borderNode = border.removeFirst();
+            Node borderNode = border.stream().min(Comparator.comparingInt(Node::getHeight)).get();
             currentHeight = borderNode.getHeight();
+            border.remove(borderNode);
             System.out.println("currentHeight: "+ currentHeight);
             borderNode.process();
         }
