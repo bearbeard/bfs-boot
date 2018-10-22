@@ -1,9 +1,6 @@
 package bfs.bfsboot.bfs;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Surface {
     private int xSize;
@@ -18,12 +15,12 @@ public class Surface {
     public Surface(int xSize, int ySize) {
         this.xSize = xSize;
         this.ySize = ySize;
-
+        Random r = new Random();
         for (int i = 0; i < ySize; i++) {
             List<Node> a = new ArrayList<>();
             elements.add(a);
             for (int j = 0; j < xSize; j++) {
-                Node n = new Node(Double.valueOf(Math.random() * 10).intValue(), j, i, this);
+                Node n = new Node(r.nextInt(10), j, i, this);
                 a.add(n);
             }
         }
