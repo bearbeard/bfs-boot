@@ -107,4 +107,12 @@ public class Surface {
         }
         return sb.toString();
     }
+
+    public String toWebString() {
+        StringBuilder sb = new StringBuilder();
+        for (List<Node> l : elements) {
+            sb.append(l).append("<br>");
+        }
+        return sb.toString();
+    }
 }
